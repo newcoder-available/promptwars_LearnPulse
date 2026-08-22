@@ -28,7 +28,7 @@ app.use(cors({ origin: /^http:\/\/localhost:\d+$/ }));
 app.use(express.json({ limit: "50kb" })); // efficiency + DoS guard
 
 const GEMINI_KEY = process.env.GEMINI_API_KEY || "";
-const MODEL = "gemini-2.0-flash";
+const MODEL = "gemini-3.5-flash";
 const ALLOWED_TASKS = new Set([
   "diagnostic",
   "nextQuestion",

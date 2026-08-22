@@ -7,7 +7,7 @@
 import { buildPrompt } from "../../server/prompts.js";
 import { mockResponse } from "../../server/mock.js";
 
-const MODEL = "gemini-2.0-flash";
+const MODEL = "gemini-3.5-flash";
 const ALLOWED_TASKS = new Set([
   "diagnostic",
   "nextQuestion",
