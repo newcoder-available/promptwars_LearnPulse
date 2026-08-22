@@ -23,7 +23,7 @@ import PulseFeed from "./components/PulseFeed.jsx";
 export default function App() {
   const [view, setView] = useState("home"); // home | learn | pulse | teachback
   const [name, setName] = useState("");
-  const [profile, setProfile] = useState({ subject: "", interest: "" });
+  const [profile, setProfile] = useState({ subject: "", goal: "" });
   const [mastery, setMastery] = useState({});
   const [signals, setSignals] = useState({ misconceptions: [], fragile: [] });
   const [questions, setQuestions] = useState([]);
@@ -72,7 +72,7 @@ export default function App() {
         try {
           const data = await generate("misconception", {
             subject: profile.subject,
-            interest: profile.interest,
+            goal: profile.goal,
             concept: q.concept,
             learnerAnswer: res.misconception,
           });
@@ -84,7 +84,7 @@ export default function App() {
         try {
           const data = await generate("explain", {
             subject: profile.subject,
-            interest: profile.interest,
+            goal: profile.goal,
             concept: q.concept,
           });
           setExplanation({ title: `Another way to see ${q.concept}`, body: data.explanation });
@@ -187,7 +187,7 @@ export default function App() {
           <>
             {explanation && (
               <div className="card" role="status">
-                <span className="badge pulse">{profile.interest} analogy</span>
+                <span className="badge pulse">{profile.goal}</span>
                 <h3 style={{ marginTop: 10 }}>{explanation.title}</h3>
                 <p style={{ marginBottom: 0 }}>{explanation.body}</p>
               </div>

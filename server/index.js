@@ -51,7 +51,7 @@ app.post("/api/generate", async (req, res) => {
 
     const payload = {
       subject: clean(req.body.subject, 120),
-      interest: clean(req.body.interest, 120),
+      goal: clean(req.body.goal, 60),
       concept: clean(req.body.concept, 160),
       city: clean(req.body.city, 120),
       difficulty: Math.min(5, Math.max(1, Number(req.body.difficulty) || 2)),

@@ -7,12 +7,17 @@ const SUBJECTS = [
   { name: "Photosynthesis", desc: "How plants turn light into life" },
 ];
 
-const INTERESTS = ["Cricket", "Cooking", "Gaming", "Music", "Movies", "Football"];
+const GOALS = [
+  { name: "Exam prep", desc: "Mnemonics & recall under pressure" },
+  { name: "Interview prep", desc: "Real-world use + typical questions" },
+  { name: "Building a project", desc: "Practical, apply-it-now examples" },
+  { name: "Just curious", desc: "The fascinating why behind it" },
+];
 
 /** Home: "Hello, {name} — what would you like to master?" hero + suggestion cards. */
 export default function Home({ name, onName, onStart }) {
   const [subject, setSubject] = useState("");
-  const [interest, setInterest] = useState("Cricket");
+  const [goal, setGoal] = useState("Just curious");
   const [draftName, setDraftName] = useState("");
 
   // First visit: ask the learner's name once.
@@ -43,7 +48,7 @@ export default function Home({ name, onName, onStart }) {
     );
   }
 
-  const start = (s) => onStart({ subject: s, interest });
+  const start = (s) => onStart({ subject: s, goal });
 
   return (
     <section aria-labelledby="home-title">
@@ -72,19 +77,20 @@ export default function Home({ name, onName, onStart }) {
       </div>
 
       <p style={{ fontWeight: 600, margin: "26px 0 8px" }}>
-        Explain things through my interest in…
+        Why are you learning this?
       </p>
-      <div role="radiogroup" aria-label="Personal interest" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-        {INTERESTS.map((i) => (
+      <div role="radiogroup" aria-label="Learning goal" className="suggest-grid" style={{ marginTop: 0 }}>
+        {GOALS.map((g) => (
           <button
-            key={i}
+            key={g.name}
             role="radio"
-            aria-checked={interest === i}
-            className="option"
-            style={{ width: "auto", marginBottom: 0 }}
-            onClick={() => setInterest(i)}
+            aria-checked={goal === g.name}
+            className="suggest option"
+            style={{ marginBottom: 0 }}
+            onClick={() => setGoal(g.name)}
           >
-            {i}
+            <strong>{g.name}</strong>
+            <span>{g.desc}</span>
           </button>
         ))}
       </div>

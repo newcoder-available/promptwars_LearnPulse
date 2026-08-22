@@ -80,11 +80,18 @@ export function mockResponse(task, p) {
       const q = BANK.find((b) => b.concept === weakest) || BANK[Math.floor(Math.random() * BANK.length)];
       return { ...q, difficulty: p.difficulty };
     }
-    case "explain":
-      return {
-        explanation: `Think of "${p.concept}" like something from ${p.interest || "cooking"}: a variable is a labelled jar — the label (name) stays, but you can swap what's inside (the value) any time. When code reads the name, it just looks inside the jar.`,
-        analogyUsed: p.interest || "cooking",
+    case "explain": {
+      const styles = {
+        "Exam prep": `Exam trick for "${p.concept}": remember "label stays, contents change" — a variable is a labelled jar. If the exam asks what x holds after reassignment, always take the LAST value poured in.`,
+        "Interview prep": `In interviews, "${p.concept}" shows up as: "what's the output after reassignment?" A variable is a labelled jar — the name points to whatever was stored last. Say that out loud and you sound senior.`,
+        "Building a project": `In a real build, "${p.concept}" is your app's short-term memory: store user input in a named jar, read it wherever needed, overwrite it when things change.`,
+        "Just curious": `Here's the neat part of "${p.concept}": the computer never stores the NAME — just an address. The label is purely for humans. Naming things is a gift the language gives you, not the machine.`,
       };
+      return {
+        explanation: styles[p.goal] || styles["Just curious"],
+        styleUsed: p.goal || "Just curious",
+      };
+    }
     case "teachback": {
       const good = (p.learnerAnswer || "").length > 80;
       return {
@@ -98,7 +105,7 @@ export function mockResponse(task, p) {
     }
     case "misconception":
       return {
-        lesson: `The trap: it *feels* like range(3) should include 3 — but Python stops just before the end value. Like floors in a lift labelled 0, 1, 2: three floors, and "3" is the roof you never reach. So range(3) → 0, 1, 2.`,
+        lesson: `The trap: it *feels* like range(3) should include 3 — but Python stops just before the end value. Like floors in a lift labelled 0, 1, 2: three floors, and "3" is the roof you never reach. So range(3) → 0, 1, 2. Remember it as "stop means stop-before".`,
       };
     case "pulseFeed":
       return {

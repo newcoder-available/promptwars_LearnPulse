@@ -24,10 +24,16 @@ ${JSON_RULE}
 Schema: {"concept":string,"question":string,"options":[{"text":string,"misconception":string|null}],"correctIndex":number,"difficulty":number}`;
 
     case "explain":
-      return `You are LearnPulse. Explain "${p.concept}" (subject: ${p.subject}) to a struggling learner.
-Use an analogy from their personal interest: "${p.interest}". Keep it under 120 words, warm and concrete.
+      return `You are LearnPulse. Explain "${p.concept}" (subject: ${p.subject}) to a struggling learner
+whose learning goal is: "${p.goal}".
+Adapt the explanation style to that goal:
+- "Exam prep": concise rule + a memorable mnemonic or trick to recall it under pressure.
+- "Interview prep": the real-world application + how this concept appears in interview questions.
+- "Building a project": a concrete, practical example of using it in a real build.
+- "Just curious": the fascinating why-it-works context that makes it stick.
+Keep it under 120 words, warm and concrete.
 ${JSON_RULE}
-Schema: {"explanation":string,"analogyUsed":string}`;
+Schema: {"explanation":string,"styleUsed":string}`;
 
     case "teachback":
       return `You are a curious, slightly confused student. The learner just explained "${p.concept}" to you:
@@ -41,7 +47,7 @@ Schema: {"score":number,"feedback":string,"followUpQuestion":string|null,"master
       return `You are LearnPulse. The learner repeatedly shows this misconception: "${p.learnerAnswer}"
 in concept "${p.concept}" (subject: ${p.subject}).
 Write a short targeted micro-lesson (<=100 words) that names the trap, explains why it feels right,
-and corrects it with one vivid example using their interest: "${p.interest}".
+and corrects it with one vivid example fitted to their learning goal: "${p.goal}".
 ${JSON_RULE}
 Schema: {"lesson":string}`;
 

@@ -30,7 +30,7 @@ No API key? The server auto-runs in **mock mode** with a built-in Python questio
 | **Teach-Back mode** | AI plays a confused student; mastery is only confirmed when you can teach it (Feynman technique) |
 | **Confidence calibration** | Every answer includes a confidence rating. Confident+wrong = misconception alert; unsure+correct = fragile knowledge scheduled for review |
 | **Misconception detection** | Wrong options map to *specific* misconceptions; repeated traps trigger targeted micro-lessons |
-| **Analogy engine** | Explanations regenerated through the learner's own interest (cricket, cooking, gaming…) |
+| **Goal-adaptive explanations** | Learner picks WHY they're learning (exam, interview, project, curiosity) — every explanation and micro-lesson restyles to that goal |
 | **Memory decay** | Mastery fades over time on a spaced-repetition curve; fading concepts dim on the Pulse map |
 | **Struggle timer** | Silent stall detection slides in a gentle hint before the learner fails |
 

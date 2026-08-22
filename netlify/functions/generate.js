@@ -36,7 +36,7 @@ export default async (req) => {
 
     const payload = {
       subject: clean(body.subject, 120),
-      interest: clean(body.interest, 120),
+      goal: clean(body.goal, 60),
       concept: clean(body.concept, 160),
       city: clean(body.city, 120),
       difficulty: Math.min(5, Math.max(1, Number(body.difficulty) || 2)),
