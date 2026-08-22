@@ -32,6 +32,10 @@ export default function App() {
   const [teachConcept, setTeachConcept] = useState(null);
   const [explanation, setExplanation] = useState(null);
   const [loading, setLoading] = useState(false);
+  // Progress tracking: mastery at the start of the current session,
+  // plus overall-pulse history across sessions for the trend line.
+  const [sessionStart, setSessionStart] = useState({});
+  const [pulseHistory, setPulseHistory] = useState([]);
   const [error, setError] = useState("");
 
   const started = Object.keys(mastery).length > 0;
@@ -41,6 +45,7 @@ export default function App() {
   /* ── Diagnostic ─────────────────────────────────────────────── */
   const startDiagnostic = async (p) => {
     setProfile(p);
+    setSessionStart({});
     setLoading(true);
     setError("");
     try {
@@ -89,6 +94,9 @@ export default function App() {
       if (isDiagnostic && qIndex < questions.length - 1) {
         setQIndex((i) => i + 1);
       } else {
+        const vals = Object.values(nextMastery);
+        const pulseNow = vals.length ? Math.round(vals.reduce((x, y) => x + y, 0) / vals.length) : 0;
+        setPulseHistory((h) => [...h, pulseNow]);
         setView("pulse");
       }
     },
@@ -98,6 +106,7 @@ export default function App() {
   /* ── Adaptive session ───────────────────────────────────────── */
   const continueLearning = async () => {
     if (!started) return;
+    setSessionStart(mastery);
     setLoading(true);
     setError("");
     setExplanation(null);
@@ -187,6 +196,8 @@ export default function App() {
               <Dashboard
                 mastery={mastery}
                 signals={signals}
+                sessionStart={sessionStart}
+                pulseHistory={pulseHistory}
                 onContinue={continueLearning}
                 onTeachBack={goTeachBack}
               />

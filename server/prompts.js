@@ -50,9 +50,10 @@ Schema: {"lesson":string}`;
 Find:
 1. 3-4 recent news items, discoveries, or developments directly related to "${p.subject}" (last few months).
 2. 2-3 upcoming or ongoing events near ${p.city || "the learner"} relevant to "${p.subject}" — workshops, meetups, exhibitions, hackathons, lectures, or online events if nothing local exists.
+3. 3-4 well-reviewed online courses for "${p.subject}" from platforms like LinkedIn Learning, Coursera, Udemy, edX, NPTEL, SWAYAM, or YouTube. Mix free and paid; note the level (beginner/intermediate/advanced). Only include courses you actually found via search, with their real URLs.
 Keep every summary under 30 words, learner-friendly, and note WHY each matters for someone studying this subject.
 ${JSON_RULE}
-Schema: {"news":[{"title":string,"summary":string,"whyItMatters":string,"source":string,"date":string}],"events":[{"name":string,"when":string,"where":string,"summary":string,"type":"in-person"|"online"}]}`;
+Schema: {"news":[{"title":string,"summary":string,"whyItMatters":string,"source":string,"date":string}],"events":[{"name":string,"when":string,"where":string,"summary":string,"type":"in-person"|"online"}],"courses":[{"title":string,"platform":string,"level":string,"cost":"free"|"paid","summary":string,"url":string}]}`;
 
     default:
       throw new Error("Unknown task");

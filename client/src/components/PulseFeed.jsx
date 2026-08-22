@@ -32,7 +32,7 @@ export default function PulseFeed({ subject }) {
     <section aria-labelledby="feed-title">
       <h2 id="feed-title">Discover: {subject}</h2>
       <p style={{ color: "var(--ink-soft)", marginTop: -6 }}>
-        Fresh news and events around what you're learning — searched live by AI.
+        Fresh news, events, and courses around what you're learning — searched live by AI.
       </p>
 
       <div className="card" style={{ display: "flex", gap: 10, alignItems: "flex-end", flexWrap: "wrap" }}>
@@ -51,7 +51,7 @@ export default function PulseFeed({ subject }) {
           />
         </div>
         <button className="btn-primary" onClick={load} disabled={loading}>
-          {loading ? "Searching…" : feed ? "Refresh" : "Find news & events"}
+          {loading ? "Searching…" : feed ? "Refresh" : "Find news, events & courses"}
         </button>
       </div>
 
@@ -95,8 +95,33 @@ export default function PulseFeed({ subject }) {
             </article>
           ))}
 
+          <h3 style={{ marginTop: 24 }}>Courses to go deeper</h3>
+          {(feed.courses || []).map((c, i) => (
+            <article key={i} className="card" style={{ padding: 18 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+                <strong>{c.title}</strong>
+                <span>
+                  <span className="badge pulse">{c.platform}</span>{" "}
+                  <span className="badge">{c.level}</span>{" "}
+                  <span className={`badge ${c.cost === "free" ? "pulse" : ""}`}>{c.cost}</span>
+                </span>
+              </div>
+              <p style={{ margin: "8px 0 6px" }}>{c.summary}</p>
+              {c.url && (
+                <a
+                  href={c.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "var(--focus)", fontWeight: 600, fontSize: 14 }}
+                >
+                  View course ↗
+                </a>
+              )}
+            </article>
+          ))}
+
           <p style={{ fontSize: 13, color: "var(--ink-soft)" }}>
-            AI-searched results — double-check dates and venues before attending.
+            AI-searched results — double-check dates, venues, and course prices before committing.
           </p>
         </>
       )}

@@ -28,7 +28,7 @@ export default function AgentPanel({ mastery, started, strongest, actions }) {
       enabled: Boolean(strongest),
     },
     {
-      title: "Discover news & events",
+      title: "Discover news, events & courses",
       desc: "What's happening around your subject right now",
       onClick: actions.discover,
       enabled: started,

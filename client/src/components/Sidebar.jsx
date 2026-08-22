@@ -12,6 +12,7 @@ export default function Sidebar({ view, onNavigate, canLearn }) {
     <nav className="sidebar" aria-label="Main">
       <div className="logo">
         Learn<span>Pulse</span>
+        <small className="tagline">Learning that adapts to your pulse.</small>
       </div>
       {ITEMS.map((it) => {
         const disabled = it.id !== "home" && !canLearn;

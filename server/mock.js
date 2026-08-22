@@ -148,6 +148,40 @@ export function mockResponse(task, p) {
             type: "online",
           },
         ],
+        courses: [
+          {
+            title: "Python for Everybody",
+            platform: "Coursera",
+            level: "beginner",
+            cost: "free",
+            summary: "The classic beginner path from University of Michigan — audit for free.",
+            url: "https://www.coursera.org/specializations/python",
+          },
+          {
+            title: "Python Essential Training",
+            platform: "LinkedIn Learning",
+            level: "beginner",
+            cost: "paid",
+            summary: "Compact, career-oriented coverage of core Python with exercises.",
+            url: "https://www.linkedin.com/learning/",
+          },
+          {
+            title: "Programming, Data Structures and Algorithms using Python",
+            platform: "NPTEL",
+            level: "intermediate",
+            cost: "free",
+            summary: "IIT-taught course with certification option — strong for Indian learners.",
+            url: "https://nptel.ac.in/",
+          },
+          {
+            title: "Python Full Course for Beginners",
+            platform: "YouTube",
+            level: "beginner",
+            cost: "free",
+            summary: "A single long-form walkthrough — good for revising after your diagnostic.",
+            url: "https://www.youtube.com/",
+          },
+        ],
       };
 
     default:
