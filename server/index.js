@@ -91,8 +91,20 @@ app.post("/api/generate", async (req, res) => {
     const jsonText = text.replace(/```json|```/g, "").trim();
     res.json({ mock: false, data: JSON.parse(jsonText) });
   } catch (err) {
-    console.error("generate failed:", err.message);
-    res.status(502).json({ error: "Generation failed. Try again." });
+    // Demo resilience: if Gemini fails (rate limit, quota, outage),
+    // serve sample data instead of an error. Real cause goes to the logs.
+    console.error("generate failed, serving fallback:", err.message);
+    const data = mockResponse(clean(req.body.task, 40), {
+      subject: clean(req.body.subject, 120),
+      goal: clean(req.body.goal, 60),
+      city: clean(req.body.city, 120),
+      concept: clean(req.body.concept, 160),
+      learnerAnswer: clean(req.body.learnerAnswer, 1500),
+      mastery: req.body.mastery && typeof req.body.mastery === "object" ? req.body.mastery : {},
+      difficulty: Math.min(5, Math.max(1, Number(req.body.difficulty) || 2)),
+    });
+    data._fallback = true;
+    res.json({ mock: true, data });
   }
 });
 

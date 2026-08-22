@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { generate } from "../lib/api.js";
+import CourseCatalog from "./CourseCatalog.jsx";
 
 /**
  * Pulse Feed: live news + nearby events for the learner's subject,
@@ -56,6 +57,12 @@ export default function PulseFeed({ subject }) {
       </div>
 
       {error && <p className="error-box" role="alert">{error}</p>}
+
+      {feed?._fallback && (
+        <p className="hint" role="status">
+          Live AI search is busy right now — showing sample results. Try Refresh in a minute.
+        </p>
+      )}
 
       {loading && (
         <div className="card" role="status" aria-live="polite">
@@ -125,6 +132,8 @@ export default function PulseFeed({ subject }) {
           </p>
         </>
       )}
+
+      <CourseCatalog />
     </section>
   );
 }

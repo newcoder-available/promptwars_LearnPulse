@@ -29,8 +29,9 @@ const json = (obj, status = 200) =>
 export default async (req) => {
   if (req.method !== "POST") return json({ error: "POST only." }, 405);
 
+  let body = {};
   try {
-    const body = await req.json();
+    body = await req.json();
     const task = clean(body.task, 40);
     if (!ALLOWED_TASKS.has(task)) return json({ error: "Unknown task." }, 400);
 
@@ -70,8 +71,24 @@ export default async (req) => {
     const text = out?.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") ?? "{}";
     return json({ mock: false, data: JSON.parse(text.replace(/```json|```/g, "").trim()) });
   } catch (err) {
-    console.error("generate failed:", err.message);
-    return json({ error: "Generation failed. Try again." }, 502);
+    // Demo resilience: never show a dead end on the public link.
+    // The real cause (rate limit / quota / model error) is in Netlify function logs.
+    console.error("generate failed, serving fallback:", err.message);
+    try {
+      const data = mockResponse(clean(body.task, 40), {
+        subject: clean(body.subject, 120),
+        goal: clean(body.goal, 60),
+        city: clean(body.city, 120),
+        concept: clean(body.concept, 160),
+        learnerAnswer: clean(body.learnerAnswer, 1500),
+        mastery: body.mastery && typeof body.mastery === "object" ? body.mastery : {},
+        difficulty: Math.min(5, Math.max(1, Number(body.difficulty) || 2)),
+      });
+      data._fallback = true;
+      return json({ mock: true, data });
+    } catch {
+      return json({ error: "Generation failed. Try again." }, 502);
+    }
   }
 };
 
