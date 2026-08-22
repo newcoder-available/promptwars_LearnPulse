@@ -5,6 +5,7 @@ const ITEMS = [
   { id: "pulse", label: "Pulse Map", icon: "∿" },
   { id: "review", label: "Review", icon: "↻" },
   { id: "discover", label: "Discover", icon: "✦" },
+  { id: "notes", label: "Notes", icon: "✎" },
 ];
 
 export default function Sidebar({ view, onNavigate, canLearn }) {
@@ -15,7 +16,7 @@ export default function Sidebar({ view, onNavigate, canLearn }) {
         <small className="tagline">Learning that adapts to your pulse.</small>
       </div>
       {ITEMS.map((it) => {
-        const disabled = it.id !== "home" && !canLearn;
+        const disabled = it.id !== "home" && it.id !== "notes" && !canLearn;
         return (
           <button
             key={it.id}

@@ -6,6 +6,8 @@ import {
   weakestConcept,
   difficultyFor,
   applyDecay,
+  fadingConcepts,
+  conceptsNeedingReview,
   overallPulse,
   CONFIDENCE,
 } from "../knowledgeTracker.js";
@@ -102,5 +104,36 @@ describe("overallPulse", () => {
   it("averages mastery and handles empty state", () => {
     expect(overallPulse({ A: 40, B: 60 })).toBe(50);
     expect(overallPulse({})).toBe(0);
+  });
+});
+
+describe("conceptsNeedingReview", () => {
+  it("returns fading concepts before weak-but-not-fading ones, weakest first", () => {
+    const mastery = { Strong: 90, Fading: 30, Weak: 58, AlsoFading: 10 };
+    const result = conceptsNeedingReview(mastery);
+    expect(result).toEqual(["AlsoFading", "Fading", "Weak"]);
+  });
+
+  it("never double-counts a concept as both fading and weak", () => {
+    const mastery = { A: 20 }; // below both thresholds
+    const result = conceptsNeedingReview(mastery);
+    expect(result).toEqual(["A"]);
+    expect(new Set(result).size).toBe(result.length);
+  });
+
+  it("returns nothing when every concept is healthy", () => {
+    expect(conceptsNeedingReview({ A: 70, B: 95 })).toEqual([]);
+  });
+
+  it("respects custom thresholds", () => {
+    expect(conceptsNeedingReview({ A: 55 }, 50, 60)).toEqual(["A"]); // weak, not fading
+    expect(conceptsNeedingReview({ A: 55 }, 60, 60)).toEqual(["A"]); // now counts as fading
+  });
+
+  it("stays consistent with fadingConcepts for the fading half", () => {
+    const mastery = { A: 10, B: 80, C: 40 };
+    const fading = fadingConcepts(mastery);
+    const review = conceptsNeedingReview(mastery);
+    for (const c of fading) expect(review).toContain(c);
   });
 });

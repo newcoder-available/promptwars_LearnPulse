@@ -16,12 +16,16 @@ Each wrong option must map to a REAL common misconception.
 ${JSON_RULE}
 Schema: {"questions":[{"concept":string,"question":string,"options":[{"text":string,"misconception":string|null}],"correctIndex":number,"difficulty":1-5}]}`;
 
-    case "nextQuestion":
+    case "nextQuestion": {
+      const target = p.targetConcept
+        ? `Write ONE question specifically for the concept "${p.targetConcept}"`
+        : `Pick the WEAKEST concept from the mastery map and write ONE question for it`;
       return `You are LearnPulse. Subject: "${p.subject}". Learner mastery (0-100 per concept): ${masteryStr}.
-Pick the WEAKEST concept and write ONE question at difficulty ${p.difficulty}/5.
+${target}, at difficulty ${p.difficulty}/5.
 Wrong options must map to real misconceptions.
 ${JSON_RULE}
 Schema: {"concept":string,"question":string,"options":[{"text":string,"misconception":string|null}],"correctIndex":number,"difficulty":number}`;
+    }
 
     case "explain":
       return `You are LearnPulse. Explain "${p.concept}" (subject: ${p.subject}) to a struggling learner
@@ -60,6 +64,21 @@ Find:
 Keep every summary under 30 words, learner-friendly, and note WHY each matters for someone studying this subject.
 ${JSON_RULE}
 Schema: {"news":[{"title":string,"summary":string,"whyItMatters":string,"source":string,"date":string}],"events":[{"name":string,"when":string,"where":string,"summary":string,"type":"in-person"|"online"}],"courses":[{"title":string,"platform":string,"level":string,"cost":"free"|"paid","summary":string,"url":string}]}`;
+
+    case "noteSuggest":
+      return `You are LearnPulse Notes. The learner typed the topic word: "${p.topic}".
+This word may mean different things in different fields (e.g. "Token" \u2192 token in AI/LLMs, token in blockchain, token systems in psychology, authentication tokens).
+Suggest 3-5 DISTINCT interpretations across different fields, each phrased as a clear note title.
+${JSON_RULE}
+Schema: {"suggestions":[{"title":string,"field":string,"hook":string}]} where hook is a one-line teaser (<=15 words).`;
+
+    case "noteCreate":
+      return `You are LearnPulse Notes. Create a structured, Notion-style study note.
+Note title: "${p.topic}"${p.goal ? ` | Learner's goal: ${p.goal}` : ""}.
+Make it accurate, concise, and immediately useful for revision.
+${JSON_RULE}
+Schema: {"title":string,"field":string,"summary":string,"keyPoints":[string,string,string,string],"example":string,"relatedConcepts":[string,string,string],"quickRecall":string}
+- summary: 2-3 sentences. keyPoints: 3-5 crisp bullets. example: one concrete example. quickRecall: a one-line mnemonic or memory hook.`;
 
     default:
       throw new Error("Unknown task");

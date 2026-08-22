@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { generate } from "../lib/api.js";
+import MicButton from "./MicButton.jsx";
+import { speak, ttsSupported } from "../lib/voice.js";
 
 /**
  * Teach-Back (Feynman) mode: the AI plays a confused student.
@@ -47,14 +49,31 @@ export default function TeachBack({ subject, concept, onDone }) {
         onChange={(e) => setAnswer(e.target.value)}
         placeholder={`Okay, so ${concept} works like this...`}
       />
+      <div style={{ marginTop: 8 }}>
+        <MicButton
+          label="Speak your answer"
+          onText={(t) => setAnswer((prev) => (prev.trim() ? `${prev.trim()} ${t}` : t))}
+        />
+      </div>
 
       {error && <p className="error-box" role="alert">{error}</p>}
 
       {result && (
         <div className="hint" role="status" style={{ marginTop: 14 }}>
-          <p style={{ margin: 0 }}>
-            <span className="mono">score {result.score}/100</span> — {result.feedback}
-          </p>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
+            <p style={{ margin: 0 }}>
+              <span className="mono">score {result.score}/100</span> — {result.feedback}
+            </p>
+            {ttsSupported() && (
+              <button
+                style={{ flex: "none", padding: "4px 10px", fontSize: 13 }}
+                onClick={() => speak(`${result.feedback} ${result.followUpQuestion || ""}`)}
+                aria-label="Read feedback aloud"
+              >
+                🔊
+              </button>
+            )}
+          </div>
           {result.followUpQuestion && (
             <p style={{ marginBottom: 0 }}>
               <strong>🤔 "{result.followUpQuestion}"</strong>

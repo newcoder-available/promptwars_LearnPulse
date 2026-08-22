@@ -76,6 +76,20 @@ export function fadingConcepts(mastery, threshold = 50) {
     .map(([c]) => c);
 }
 
+/**
+ * Concepts worth reviewing, ranked weakest-first: everything below the
+ * fading threshold, plus everything below the weak threshold that isn't
+ * already counted as fading. Pulled out as a pure function (rather than
+ * left inline in the Review component) so it's unit-testable in isolation
+ * and the UI stays a thin renderer of this decision.
+ */
+export function conceptsNeedingReview(mastery, fadingThreshold = 50, weakThreshold = 60) {
+  const entries = Object.entries(mastery).sort((a, b) => a[1] - b[1]);
+  const fading = entries.filter(([, s]) => s < fadingThreshold).map(([c]) => c);
+  const weak = entries.filter(([c, s]) => s < weakThreshold && !fading.includes(c)).map(([c]) => c);
+  return [...fading, ...weak];
+}
+
 /** Overall pulse = average mastery, for the dashboard headline. */
 export function overallPulse(mastery) {
   const vals = Object.values(mastery);

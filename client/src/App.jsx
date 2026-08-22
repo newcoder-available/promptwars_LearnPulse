@@ -16,6 +16,8 @@ import Dashboard from "./components/Dashboard.jsx";
 import PulseLine from "./components/PulseLine.jsx";
 import PulseFeed from "./components/PulseFeed.jsx";
 import { TEACHBACK_UNLOCK } from "./lib/constants.js";
+import Notes from "./components/Notes.jsx";
+import Review from "./components/Review.jsx";
 
 /**
  * LearnPulse shell: sidebar | main view | Pulse Agent.
@@ -105,17 +107,18 @@ export default function App() {
   );
 
   /* ── Adaptive session ───────────────────────────────────────── */
-  const continueLearning = async () => {
+  const continueLearning = async (targetConcept) => {
     if (!started) return;
     setSessionStart(mastery);
     setLoading(true);
     setError("");
     setExplanation(null);
     try {
-      const target = weakestConcept(mastery);
+      const target = targetConcept || weakestConcept(mastery);
       const data = await generate("nextQuestion", {
         subject: profile.subject,
         mastery,
+        targetConcept: targetConcept || undefined,
         difficulty: difficultyFor(mastery[target] ?? 30),
       });
       setQuestions([data]);
@@ -146,9 +149,11 @@ export default function App() {
   const navigate = (id) => {
     setError("");
     if (id === "home") setView("home");
-    else if (id === "learn" || id === "review") continueLearning();
+    else if (id === "learn") continueLearning();
+    else if (id === "review") setView("review");
     else if (id === "pulse") setView("pulse");
     else if (id === "discover") setView("discover");
+    else if (id === "notes") setView("notes");
   };
 
   return (
@@ -202,6 +207,7 @@ export default function App() {
                 pulseHistory={pulseHistory}
                 onContinue={continueLearning}
                 onTeachBack={goTeachBack}
+                onReview={() => setView("review")}
               />
             ) : (
               <div className="card">
@@ -223,6 +229,23 @@ export default function App() {
           )
         )}
 
+        {!loading && view === "review" && (
+          started ? (
+            <Review
+              mastery={mastery}
+              onReviewConcept={(concept) => continueLearning(concept)}
+              onBack={() => setView("pulse")}
+            />
+          ) : (
+            <div className="card">
+              <h2>Nothing to review yet</h2>
+              <p style={{ color: "var(--ink-soft)" }}>Start a diagnostic from Home first.</p>
+            </div>
+          )
+        )}
+
+        {!loading && view === "notes" && <Notes goal={profile.goal} />}
+
         {!loading && view === "teachback" && (
           <TeachBack subject={profile.subject} concept={teachConcept} onDone={confirmTeachBack} />
         )}
@@ -232,7 +255,13 @@ export default function App() {
         mastery={mastery}
         started={started}
         strongest={strongest}
-        actions={{ goHome: () => setView("home"), continueLearning, teachBack: goTeachBack, discover: () => setView("discover") }}
+        actions={{
+          goHome: () => setView("home"),
+          continueLearning,
+          teachBack: goTeachBack,
+          discover: () => setView("discover"),
+          review: () => setView("review"),
+        }}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CONFIDENCE } from "../lib/knowledgeTracker.js";
-
 import { HINT_AFTER_MS, ADVANCE_DELAY_CORRECT_MS, ADVANCE_DELAY_WRONG_MS } from "../lib/constants.js";
+import { speak, stopSpeaking, ttsSupported } from "../lib/voice.js";
 
 const CONF_LABELS = [
   { key: CONFIDENCE.SURE, label: "I'm sure" },
@@ -20,16 +20,28 @@ export default function QuestionCard({ q, index, total, onAnswer }) {
   const [confidence, setConfidence] = useState(CONFIDENCE.MAYBE);
   const [revealed, setRevealed] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
   const startRef = useRef(Date.now());
 
   useEffect(() => {
     setSelected(null);
     setRevealed(false);
     setShowHint(false);
+    setSpeaking(false);
+    stopSpeaking();
     startRef.current = Date.now();
     const t = setTimeout(() => setShowHint(true), HINT_AFTER_MS);
-    return () => clearTimeout(t);
+    return () => {
+      clearTimeout(t);
+      stopSpeaking();
+    };
   }, [q]);
+
+  const readAloud = () => {
+    const optionText = q.options.map((o, i) => `Option ${i + 1}: ${o.text}.`).join(" ");
+    setSpeaking(true);
+    speak(`${q.question} ${optionText}`, { onEnd: () => setSpeaking(false) });
+  };
 
   const submit = () => {
     if (selected === null) return;
@@ -53,8 +65,19 @@ export default function QuestionCard({ q, index, total, onAnswer }) {
     <section className="card" aria-labelledby="q-title">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span className="badge">{q.concept}</span>
-        <span className="mono" style={{ fontSize: 13, color: "var(--ink-soft)" }}>
-          {index + 1} / {total} · lvl {q.difficulty}
+        <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {ttsSupported() && (
+            <button
+              onClick={speaking ? () => { stopSpeaking(); setSpeaking(false); } : readAloud}
+              aria-label={speaking ? "Stop reading question aloud" : "Read question aloud"}
+              style={{ padding: "4px 10px", fontSize: 13 }}
+            >
+              {speaking ? "◼ Stop" : "🔊 Read aloud"}
+            </button>
+          )}
+          <span className="mono" style={{ fontSize: 13, color: "var(--ink-soft)" }}>
+            {index + 1} / {total} · lvl {q.difficulty}
+          </span>
         </span>
       </div>
 

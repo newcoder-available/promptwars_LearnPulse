@@ -1,6 +1,6 @@
 import { overallPulse, fadingConcepts } from "../lib/knowledgeTracker.js";
 import { TEACHBACK_UNLOCK } from "../lib/constants.js";
-import { buildPulseReport } from "../lib/pulseReport.js";
+import { buildPulseReport, buildPulseReportHtml } from "../lib/pulseReport.js";
 import PulseLine from "./PulseLine.jsx";
 
 /** Tiny SVG sparkline of overall pulse across sessions. */
@@ -31,7 +31,7 @@ function Delta({ value }) {
 }
 
 /** The Knowledge Pulse map: mastery bars, session progress, and review nudges. */
-export default function Dashboard({ mastery, signals, sessionStart = {}, pulseHistory = [], profile = {}, onContinue, onTeachBack }) {
+export default function Dashboard({ mastery, signals, sessionStart = {}, pulseHistory = [], profile = {}, onContinue, onTeachBack, onReview }) {
   /** Download the session as a Markdown Pulse Report. */
   const downloadReport = () => {
     const md = buildPulseReport(profile, mastery, sessionStart, signals);
@@ -42,6 +42,17 @@ export default function Dashboard({ mastery, signals, sessionStart = {}, pulseHi
     link.download = "learnpulse-report.md";
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  /** Open the report as print-ready HTML and trigger the browser's
+   *  "Save as PDF" dialog — a real, universally-openable PDF, no library. */
+  const printReport = () => {
+    const win = window.open("", "_blank", "width=800,height=900");
+    if (!win) return;
+    win.document.write(buildPulseReportHtml(profile, mastery, sessionStart, signals));
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 300);
   };
 
   const pulse = overallPulse(mastery);
@@ -129,7 +140,11 @@ export default function Dashboard({ mastery, signals, sessionStart = {}, pulseHi
             Teach-Back: {strongest[0]}
           </button>
         )}
-        <button onClick={downloadReport}>Download Pulse Report</button>
+        {fading.length > 0 && onReview && (
+          <button onClick={onReview}>Review fading concepts ({fading.length})</button>
+        )}
+        <button onClick={printReport}>Save as PDF</button>
+        <button onClick={downloadReport}>Download (.md)</button>
       </div>
     </section>
   );

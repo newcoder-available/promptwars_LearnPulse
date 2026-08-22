@@ -36,7 +36,7 @@ export default function AgentPanel({ mastery, started, strongest, actions }) {
     {
       title: "Revive fading concepts",
       desc: fading.length ? `${fading.length} concept(s) are fading` : "Nothing is fading yet",
-      onClick: actions.continueLearning,
+      onClick: actions.review,
       enabled: started && fading.length > 0,
     },
   ];

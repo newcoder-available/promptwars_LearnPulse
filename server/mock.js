@@ -72,12 +72,12 @@ export function mockResponse(task, p) {
     case "diagnostic":
       return { questions: BANK };
     case "nextQuestion": {
-      // pick weakest concept from mastery, fall back to random
+      // targeted (Review) or weakest-first (adaptive session), fall back to random
       const entries = Object.entries(p.mastery);
-      const weakest = entries.length
-        ? entries.sort((a, b) => a[1] - b[1])[0][0]
-        : BANK[0].concept;
-      const q = BANK.find((b) => b.concept === weakest) || BANK[Math.floor(Math.random() * BANK.length)];
+      const target =
+        p.targetConcept ||
+        (entries.length ? entries.sort((a, b) => a[1] - b[1])[0][0] : BANK[0].concept);
+      const q = BANK.find((b) => b.concept === target) || BANK[Math.floor(Math.random() * BANK.length)];
       return { ...q, difficulty: p.difficulty };
     }
     case "explain": {
@@ -189,6 +189,42 @@ export function mockResponse(task, p) {
             url: "https://www.youtube.com/",
           },
         ],
+      };
+
+    case "noteSuggest": {
+      const t = p.topic || "Token";
+      const known = {
+        token: [
+          { title: "Token in AI & LLMs", field: "Artificial Intelligence", hook: "The unit language models actually read — not words." },
+          { title: "Token in Blockchain", field: "Web3 / Crypto", hook: "Digital assets living on someone else's chain." },
+          { title: "Token Economy Systems", field: "Psychology / Education", hook: "Earning tokens to shape behavior — from classrooms to apps." },
+          { title: "Authentication Tokens", field: "Cybersecurity", hook: "How you stay logged in without resending your password." },
+        ],
+      };
+      const generic = [
+        { title: `${t} in Computer Science`, field: "Technology", hook: `How "${t}" is used in software and systems.` },
+        { title: `${t} in Everyday Life`, field: "General", hook: `The common meaning and where you meet it daily.` },
+        { title: `${t} in Business`, field: "Business", hook: `What "${t}" means in markets and organizations.` },
+      ];
+      return { suggestions: known[t.toLowerCase()] || generic };
+    }
+
+    case "noteCreate":
+      return {
+        title: p.topic || "Token in AI & LLMs",
+        field: "Artificial Intelligence",
+        summary:
+          "A token is the basic unit of text a language model processes — roughly a word piece, not a whole word. Models read, predict, and are billed in tokens, so token counts drive both context limits and cost.",
+        keyPoints: [
+          "Tokenizers split text into sub-word pieces (\u2248 4 characters or \u00be of a word in English).",
+          "Context windows are measured in tokens — exceed them and the model forgets the start.",
+          "API pricing is per token (input + output counted separately).",
+          "The same text can tokenize differently across models — always count with the model's own tokenizer.",
+        ],
+        example:
+          'The word "unbelievable" may become 3 tokens: "un", "believ", "able" — which is why long rare words cost more than short common ones.',
+        relatedConcepts: ["Context window", "Embeddings", "Byte-pair encoding"],
+        quickRecall: "Tokens are LEGO bricks of language — models build meaning brick by brick.",
       };
 
     default:

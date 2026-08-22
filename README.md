@@ -48,9 +48,14 @@ No API key? The server auto-runs in **mock mode** with a built-in Python questio
 ```
 learnpulse/
 ├── server/
-│   ├── index.js        # Express API — key custody, validation, mock fallback
-│   ├── prompts.js      # All Gemini prompt templates (strict JSON output)
-│   └── mock.js         # Zero-setup demo data
+│   ├── handler.js       # SHARED CORE — all /api/generate logic lives here once
+│   ├── index.js         # Express adapter (local dev) — thin wrapper around handler.js
+│   ├── prompts.js       # All Gemini prompt templates (strict JSON output)
+│   └── mock.js          # Zero-setup demo data
+├── api/
+│   └── generate.js       # Vercel adapter — thin wrapper around server/handler.js
+├── netlify/functions/
+│   └── generate.js       # Netlify adapter — thin wrapper around server/handler.js
 └── client/src/
     ├── lib/
     │   ├── knowledgeTracker.js   # Pure adaptive logic (unit-tested)
@@ -65,6 +70,21 @@ learnpulse/
     └── App.jsx                   # Flow state machine
 ```
 
+## One backend, three deployments
+
+All `/api/generate` logic — task validation, sanitization, Gemini calls, mock fallback —
+lives in **`server/handler.js`**, a single platform-agnostic function. Three thin adapters
+call it:
+
+| Environment | Adapter | Convention |
+|---|---|---|
+| Local dev | `server/index.js` | Express `(req, res)` |
+| Netlify | `netlify/functions/generate.js` | Web `Request` → `Response` |
+| Vercel | `api/generate.js` | Node `(req, res)` |
+
+Edit prompts, security rules, or fallback behavior in `handler.js` once — all three
+environments pick up the change automatically. No logic is duplicated.
+
 ## Deploy (GitHub + Netlify)
 
 The repo includes `netlify.toml` and `netlify/functions/generate.js`, so the API deploys as a serverless function alongside the frontend — one site, no separate server.
@@ -75,3 +95,17 @@ The repo includes `netlify.toml` and `netlify/functions/generate.js`, so the API
 4. Deploy. The live site serves the app, and `/api/generate` runs serverless with the key held by Netlify.
 
 Local dev is unchanged: `npm run server` + `npm run client`.
+
+## Deploying to Vercel instead
+
+The repo also includes `api/generate.js` and `vercel.json`, so it deploys to Vercel with
+zero extra setup:
+
+1. On [vercel.com](https://vercel.com): **Add New → Project → Import** your GitHub repo.
+2. Vercel auto-detects the build from `vercel.json` (`npm run build`, output `client/dist`).
+3. Before deploying: **Settings → Environment Variables → Add** `GEMINI_API_KEY`.
+4. Deploy. `/api/generate` runs as a Vercel serverless function using the same
+   `server/handler.js` core as the Netlify version.
+
+You can keep both `netlify.toml` and `vercel.json` in the repo simultaneously — each
+platform only reads its own config file.
