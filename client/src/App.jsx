@@ -15,6 +15,7 @@ import TeachBack from "./components/TeachBack.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import PulseLine from "./components/PulseLine.jsx";
 import PulseFeed from "./components/PulseFeed.jsx";
+import { TEACHBACK_UNLOCK } from "./lib/constants.js";
 
 /**
  * LearnPulse shell: sidebar | main view | Pulse Agent.
@@ -40,7 +41,7 @@ export default function App() {
 
   const started = Object.keys(mastery).length > 0;
   const strongestEntry = Object.entries(mastery).sort((a, b) => b[1] - a[1])[0];
-  const strongest = strongestEntry && strongestEntry[1] >= 70 ? strongestEntry[0] : null;
+  const strongest = strongestEntry && strongestEntry[1] >= TEACHBACK_UNLOCK ? strongestEntry[0] : null;
 
   /* ── Diagnostic ─────────────────────────────────────────────── */
   const startDiagnostic = async (p) => {
@@ -196,6 +197,7 @@ export default function App() {
               <Dashboard
                 mastery={mastery}
                 signals={signals}
+                profile={{ ...profile, name }}
                 sessionStart={sessionStart}
                 pulseHistory={pulseHistory}
                 onContinue={continueLearning}

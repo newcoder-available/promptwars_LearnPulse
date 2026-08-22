@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CONFIDENCE } from "../lib/knowledgeTracker.js";
 
-const HINT_AFTER_MS = 25_000; // struggle timer → invisible rescue
+import { HINT_AFTER_MS, ADVANCE_DELAY_CORRECT_MS, ADVANCE_DELAY_WRONG_MS } from "../lib/constants.js";
 
 const CONF_LABELS = [
   { key: CONFIDENCE.SURE, label: "I'm sure" },
@@ -45,7 +45,7 @@ export default function QuestionCard({ q, index, total, onAnswer }) {
           misconception,
           timeMs: Date.now() - startRef.current,
         }),
-      correct ? 900 : 2600
+      correct ? ADVANCE_DELAY_CORRECT_MS : ADVANCE_DELAY_WRONG_MS
     );
   };
 

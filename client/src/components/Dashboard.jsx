@@ -1,4 +1,6 @@
 import { overallPulse, fadingConcepts } from "../lib/knowledgeTracker.js";
+import { TEACHBACK_UNLOCK } from "../lib/constants.js";
+import { buildPulseReport } from "../lib/pulseReport.js";
 import PulseLine from "./PulseLine.jsx";
 
 /** Tiny SVG sparkline of overall pulse across sessions. */
@@ -29,7 +31,19 @@ function Delta({ value }) {
 }
 
 /** The Knowledge Pulse map: mastery bars, session progress, and review nudges. */
-export default function Dashboard({ mastery, signals, sessionStart = {}, pulseHistory = [], onContinue, onTeachBack }) {
+export default function Dashboard({ mastery, signals, sessionStart = {}, pulseHistory = [], profile = {}, onContinue, onTeachBack }) {
+  /** Download the session as a Markdown Pulse Report. */
+  const downloadReport = () => {
+    const md = buildPulseReport(profile, mastery, sessionStart, signals);
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "learnpulse-report.md";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const pulse = overallPulse(mastery);
   const fading = fadingConcepts(mastery);
   const strongest = Object.entries(mastery).sort((a, b) => b[1] - a[1])[0];
@@ -110,11 +124,12 @@ export default function Dashboard({ mastery, signals, sessionStart = {}, pulseHi
         <button className="btn-primary" onClick={onContinue}>
           Continue learning
         </button>
-        {strongest && strongest[1] >= 70 && (
+        {strongest && strongest[1] >= TEACHBACK_UNLOCK && (
           <button onClick={() => onTeachBack(strongest[0])}>
             Teach-Back: {strongest[0]}
           </button>
         )}
+        <button onClick={downloadReport}>Download Pulse Report</button>
       </div>
     </section>
   );

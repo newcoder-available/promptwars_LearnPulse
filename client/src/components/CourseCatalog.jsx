@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
  * Curated catalog of globally recognized, in-demand courses.
  * Static data = always available, even when live AI search is rate-limited.
  */
-const CATALOG = [
+export const CATALOG = [
   { category: "Artificial Intelligence", name: "Google AI Essentials", provider: "Coursera · Google", skills: "AI productivity, prompt engineering, AI ethics", url: "https://www.coursera.org/learn/google-ai-essentials" },
   { category: "Artificial Intelligence", name: "Prompt Engineering for ChatGPT", provider: "Coursera · Vanderbilt University", skills: "Advanced prompting, workflows, LLM logic", url: "https://www.coursera.org/learn/prompt-engineering" },
   { category: "Data Science & Tech", name: "Google Data Analytics", provider: "Coursera · Google", skills: "SQL, R programming, Tableau, data cleaning", url: "https://www.coursera.org/professional-certificates/google-data-analytics" },

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CATALOG } from "./CourseCatalog.jsx";
 
 const SUBJECTS = [
   { name: "Python basics", desc: "Variables, loops, functions & lists" },
@@ -100,6 +101,25 @@ export default function Home({ name, onName, onStart }) {
           Read my pulse
         </button>
       )}
+
+      <p style={{ fontWeight: 600, margin: "30px 0 8px" }}>Trending certifications right now</p>
+      <div className="suggest-grid">
+        {CATALOG.slice(0, 3).map((c) => (
+          <a
+            key={c.name}
+            className="suggest card-link"
+            href={c.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <strong>{c.name}</strong>
+            <span>{c.provider} · {c.skills.split(",")[0]}</span>
+          </a>
+        ))}
+      </div>
+      <p style={{ fontSize: 13.5, color: "var(--ink-soft)", marginTop: 8 }}>
+        See the full searchable catalog — plus live news and events — in <strong>Discover</strong>.
+      </p>
     </section>
   );
 }

@@ -37,7 +37,7 @@ No API key? The server auto-runs in **mock mode** with a built-in Python questio
 ## How this maps to the evaluation parameters
 
 - **Problem Statement Alignment (high):** the full assess→track→adapt→feedback→visualize loop, plus knowledge-state modeling that goes beyond right/wrong (confidence matrix, misconceptions, decay).
-- **Code Quality (high):** clean separation — `server/prompts.js` (AI brain), `client/src/lib/knowledgeTracker.js` (pure logic), thin components. Documented, consistent, no dead code.
+- **Code Quality (high):** clean separation — `server/prompts.js` (AI brain), `client/src/lib/knowledgeTracker.js` (pure logic), `lib/constants.js` (all tuning values named and documented, zero magic numbers in components), thin components with JSDoc. No dead code.
 - **Security (medium):** Gemini key lives server-side only; input sanitization + task allow-list + body size caps + locked CORS origin on `/api/generate`.
 - **Efficiency (medium):** session-level response caching + in-flight request dedupe (`lib/api.js`); strong-memory decay computed lazily; single-question fetches instead of batch generation.
 - **Testing (low):** `npm test` — 10 unit tests on the pure knowledge-tracker core (mastery updates, clamping, signals, decay, adaptivity).

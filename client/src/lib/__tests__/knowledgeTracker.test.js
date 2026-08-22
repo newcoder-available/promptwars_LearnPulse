@@ -69,6 +69,35 @@ describe("memory decay", () => {
   });
 });
 
+describe("boundaries and edges", () => {
+  it("difficultyFor hits every band boundary exactly", () => {
+    expect(difficultyFor(0)).toBe(1);
+    expect(difficultyFor(24)).toBe(1);
+    expect(difficultyFor(25)).toBe(2);
+    expect(difficultyFor(44)).toBe(2);
+    expect(difficultyFor(45)).toBe(3);
+    expect(difficultyFor(64)).toBe(3);
+    expect(difficultyFor(65)).toBe(4);
+    expect(difficultyFor(84)).toBe(4);
+    expect(difficultyFor(85)).toBe(5);
+    expect(difficultyFor(100)).toBe(5);
+  });
+
+  it("unknown confidence applies no delta", () => {
+    const m = updateMastery({ A: 50 }, "A", { correct: true, confidence: "nonsense" });
+    expect(m.A).toBe(50);
+  });
+
+  it("decay never goes below zero and ignores future timestamps", () => {
+    const now = Date.now();
+    const longAgo = now - 30 * 86_400_000;
+    const decayed = applyDecay({ A: 10 }, { A: longAgo }, now);
+    expect(decayed.A).toBe(0);
+    const future = applyDecay({ B: 60 }, { B: now + 86_400_000 }, now);
+    expect(future.B).toBe(60);
+  });
+});
+
 describe("overallPulse", () => {
   it("averages mastery and handles empty state", () => {
     expect(overallPulse({ A: 40, B: 60 })).toBe(50);
