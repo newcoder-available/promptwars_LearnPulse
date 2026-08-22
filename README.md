@@ -18,7 +18,8 @@ struggle-timer hints) → visualize (Knowledge Pulse map) → teach-back (Feynma
 npm install
 cp .env.example .env     # add your Gemini key (optional — mock mode works without it)
 npm run dev              # server :8787 + client :5173
-npm test                 # unit tests for the knowledge tracker
+npm test                 # unit tests for the knowledge tracker + server sanitizer
+npm run lint              # ESLint across client and server code
 ```
 
 No API key? The server auto-runs in **mock mode** with a built-in Python question bank, so the full flow demos instantly.
@@ -40,7 +41,7 @@ No API key? The server auto-runs in **mock mode** with a built-in Python questio
 - **Code Quality (high):** clean separation — `server/prompts.js` (AI brain), `client/src/lib/knowledgeTracker.js` (pure logic), `lib/constants.js` (all tuning values named and documented, zero magic numbers in components), thin components with JSDoc. No dead code.
 - **Security (medium):** Gemini key lives server-side only; input sanitization + task allow-list + body size caps + locked CORS origin on `/api/generate`.
 - **Efficiency (medium):** session-level response caching + in-flight request dedupe (`lib/api.js`); strong-memory decay computed lazily; single-question fetches instead of batch generation.
-- **Testing (low):** `npm test` — 10 unit tests on the pure knowledge-tracker core (mastery updates, clamping, signals, decay, adaptivity).
+- **Testing (low):** `npm test` — 38 tests total: 24 covering the pure knowledge-tracker and pulse-report logic (mastery updates, clamping, signals, decay, review-targeting), and 14 covering the server-side input sanitizer that guards every request against oversized, malformed, or injected input.
 - **Accessibility (low):** semantic landmarks, radiogroup/progressbar ARIA, keyboard-visible focus rings, `role="status"`/`alert` live regions, `prefers-reduced-motion` respected, AA color contrast.
 
 ## Architecture

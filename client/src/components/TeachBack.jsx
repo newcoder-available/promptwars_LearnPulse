@@ -38,7 +38,7 @@ export default function TeachBack({ subject, concept, onDone }) {
         I'm a confused student. Explain {concept} to me in your own words — if I can't follow, I'll ask.
       </p>
 
-      <label htmlFor="tb-input" className="sr-only" style={{ position: "absolute", left: -9999 }}>
+      <label htmlFor="tb-input" className="sr-only">
         Your explanation
       </label>
       <textarea

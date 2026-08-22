@@ -27,7 +27,7 @@ export default function Home({ name, onName, onStart }) {
       <section className="card" style={{ maxWidth: 520 }}>
         <h2>Welcome to LearnPulse</h2>
         <p style={{ color: "var(--ink-soft)" }}>What should I call you?</p>
-        <label htmlFor="name" style={{ position: "absolute", left: -9999 }}>Your name</label>
+        <label htmlFor="name" className="sr-only">Your name</label>
         <input
           id="name"
           type="text"
@@ -56,7 +56,7 @@ export default function Home({ name, onName, onStart }) {
       <p className="hello">Hello, {name}</p>
       <h1 id="home-title" className="hero-q">What would you like to master?</h1>
 
-      <label htmlFor="subject" style={{ position: "absolute", left: -9999 }}>Subject</label>
+      <label htmlFor="subject" className="sr-only">Subject</label>
       <input
         id="subject"
         type="text"

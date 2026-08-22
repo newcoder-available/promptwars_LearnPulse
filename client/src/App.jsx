@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { generate } from "./lib/api.js";
 import {
   updateMastery,
@@ -40,6 +40,15 @@ export default function App() {
   const [sessionStart, setSessionStart] = useState({});
   const [pulseHistory, setPulseHistory] = useState([]);
   const [error, setError] = useState("");
+  const mainRef = useRef(null);
+
+  // Accessibility: this is a single-page app, so the URL never changes and
+  // screen readers get no navigation cue on their own. Move focus to the
+  // main region whenever the view changes so assistive tech announces the
+  // new content, the same way a full page load would.
+  useEffect(() => {
+    mainRef.current?.focus();
+  }, [view]);
 
   const started = Object.keys(mastery).length > 0;
   const strongestEntry = Object.entries(mastery).sort((a, b) => b[1] - a[1])[0];
@@ -158,9 +167,10 @@ export default function App() {
 
   return (
     <div className="shell">
+      <a href="#main-content" className="skip-link">Skip to content</a>
       <Sidebar view={view === "teachback" ? "learn" : view} onNavigate={navigate} canLearn={started} />
 
-      <main className="main">
+      <main id="main-content" className="main" ref={mainRef} tabIndex={-1}>
         {error && (
           <p className="error-box" role="alert" style={{ marginBottom: 16 }}>
             {error} — check that the server terminal shows "LearnPulse API on :8787".

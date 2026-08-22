@@ -61,7 +61,6 @@ export default function Notes({ goal }) {
   const createAll = async () => {
     for (const s of suggestions) {
       // Sequential on purpose: keeps within rate limits (efficiency).
-      // eslint-disable-next-line no-await-in-loop
       await createNote(s.title);
     }
   };

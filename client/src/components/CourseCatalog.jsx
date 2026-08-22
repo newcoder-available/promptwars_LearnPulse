@@ -42,7 +42,7 @@ export default function CourseCatalog() {
       </p>
 
       <div className="card" style={{ padding: 18 }}>
-        <label htmlFor="catalog-search" style={{ position: "absolute", left: -9999 }}>
+        <label htmlFor="catalog-search" className="sr-only">
           Search courses
         </label>
         <input

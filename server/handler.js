@@ -6,33 +6,9 @@
  */
 import { buildPrompt } from "./prompts.js";
 import { mockResponse } from "./mock.js";
+import { clean, isAllowedTask, sanitizePayload } from "./sanitize.js";
 
 const MODEL = "gemini-3.5-flash";
-const ALLOWED_TASKS = new Set([
-  "diagnostic",
-  "nextQuestion",
-  "explain",
-  "teachback",
-  "misconception",
-  "pulseFeed",
-  "noteSuggest",
-  "noteCreate",
-]);
-
-const clean = (s = "", max = 2000) =>
-  String(s).replace(/[\u0000-\u001f\u007f]/g, " ").slice(0, max).trim();
-
-const sanitizePayload = (body) => ({
-  subject: clean(body.subject, 120),
-  goal: clean(body.goal, 60),
-  concept: clean(body.concept, 160),
-  targetConcept: clean(body.targetConcept, 160),
-  topic: clean(body.topic, 160),
-  city: clean(body.city, 120),
-  difficulty: Math.min(5, Math.max(1, Number(body.difficulty) || 2)),
-  learnerAnswer: clean(body.learnerAnswer, 1500),
-  mastery: body.mastery && typeof body.mastery === "object" ? body.mastery : {},
-});
 
 /**
  * Runs one /api/generate request end-to-end.
@@ -42,7 +18,7 @@ const sanitizePayload = (body) => ({
 export async function runGenerate(body = {}) {
   const task = clean(body.task, 40);
 
-  if (!ALLOWED_TASKS.has(task)) {
+  if (!isAllowedTask(task)) {
     return { status: 400, payload: { error: "Unknown task." } };
   }
 
