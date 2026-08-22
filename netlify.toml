@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "client/dist"
+
+[functions]
+  directory = "netlify/functions"
+
+# SPA fallback: all non-API routes serve the app
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
